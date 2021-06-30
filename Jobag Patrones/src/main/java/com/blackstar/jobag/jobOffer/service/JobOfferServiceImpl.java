@@ -1,0 +1,67 @@
+package com.blackstar.jobag.jobOffer.service;
+
+import com.blackstar.jobag.employeer.domain.repository.EmployeerRepository;
+import com.blackstar.jobag.exception.ResourceNotFoundException;
+import com.blackstar.jobag.jobOffer.domain.model.JobOffer;
+import com.blackstar.jobag.jobOffer.domain.repository.JobOfferRepository;
+import com.blackstar.jobag.jobOffer.domain.service.JobOfferService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+@Service
+public class JobOfferServiceImpl implements JobOfferService {
+    @Autowired
+    private JobOfferRepository jobOfferRepository;
+    @Autowired
+    private EmployeerRepository employeerRepository;
+
+    @Override
+    public Page<JobOffer> getAllJobOffersByEmployeerId(Long employeerId, Pageable pageable) {
+        return jobOfferRepository.findByEmployeerId(employeerId,pageable);
+    }
+
+    @Override
+    public JobOffer getJobOfferByIdAndEmployeerId(Long employeerId, Long jobOfferId) {
+        return jobOfferRepository.findByIdAndEmployeerId(employeerId,jobOfferId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Job Offer not found with id" + jobOfferId +
+                                "and EmployeerId" + employeerId));
+    }
+
+    @Override
+    public JobOffer createJobOffer(Long employeerId, JobOffer jobOffer) {
+        if(jobOffer.getSalary()<930)
+            throw  new ResourceNotFoundException("El salario debe ser mayor o igual a 930");
+        return employeerRepository.findById(employeerId).map(employeer -> {
+            jobOffer.setEmployeer(employeer);
+            return jobOfferRepository.save(jobOffer);
+        }).orElseThrow(() -> new ResourceNotFoundException("Employeer","Id",employeerId));
+    }
+
+    @Override
+    public JobOffer updateJobOffer(Long employeerId, Long jobOfferId, JobOffer jobOfferDetails) {
+        if(!employeerRepository.existsById(employeerId))
+            throw  new ResourceNotFoundException("Employeer","Id",employeerId);
+        return jobOfferRepository.findById(jobOfferId).map(jobOffer -> {
+            jobOffer.setDescription(jobOfferDetails.getDescription())
+                    .setDirection(jobOfferDetails.getDirection())
+                    .setSalary(jobOfferDetails.getSalary())
+                    .setBegin_date_offer(jobOfferDetails.getBegin_date_offer())
+                    .setFinal_date_offer(jobOfferDetails.getFinal_date_offer());
+            return jobOfferRepository.save(jobOffer);
+        }).orElseThrow(() -> new ResourceNotFoundException("Job Offer","Id",jobOfferId));
+    }
+
+    @Override
+    public ResponseEntity<?> deleteJobOffer(Long employeerId, Long jobOfferId) {
+        if(!employeerRepository.existsById(employeerId))
+            throw  new ResourceNotFoundException("Employeer","Id",employeerId);
+        return jobOfferRepository.findById(jobOfferId).map(jobOffer -> {
+            jobOfferRepository.delete(jobOffer);
+            return ResponseEntity.ok().build();
+        }).orElseThrow(() -> new ResourceNotFoundException("Job Offer","Id",jobOfferId));
+    }
+}
