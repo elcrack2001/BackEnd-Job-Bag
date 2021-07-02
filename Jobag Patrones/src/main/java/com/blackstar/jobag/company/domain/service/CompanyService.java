@@ -7,12 +7,10 @@ import org.springframework.http.ResponseEntity;
 
 
 public interface CompanyService {
-    Page<Company> getAllCompanysByEmployeerId(Long employeerId, Pageable pageable);
-    Company getCompanyByIdAndEmployeerId(Long employeerId, Long companysId);
-    Page<Company> getAllCompanysBySectorId(Long sectorId, Pageable pageable);
-    Company getCompanyByIdAndSectorId(Long sectorId, Long companysId);
 
-    Company createCompany(Long employeerId, Company company);
-    Company updateCompany(Long employeerId, Long companyId, Company companyDetails);
-    ResponseEntity<?> deleteCompany(Long employeerId,  Long companyId);
+    Company createCompany(Long employeerId, Long sectorId, Company companyRequest);
+    Company updateCompany(Long employeerId, Long sectorId, Company companyRequest);
+    ResponseEntity<?> deleteCompany(Long employeerId, Long sectorId);
+    Company getCompanyById(Long companyId);
+    Page<Company> getAllCompany(Pageable pageable);
 }

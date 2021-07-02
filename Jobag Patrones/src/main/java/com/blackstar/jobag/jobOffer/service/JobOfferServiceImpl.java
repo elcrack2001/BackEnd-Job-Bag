@@ -32,6 +32,13 @@ public class JobOfferServiceImpl implements JobOfferService {
     }
 
     @Override
+    public JobOffer getJobOfferById(Long jobOfferId) {
+        return jobOfferRepository.findById(jobOfferId)
+                .orElseThrow(() -> new ResourceNotFoundException("Job Offer", "Id", jobOfferId));
+    }
+
+
+    @Override
     public JobOffer createJobOffer(Long employeerId, JobOffer jobOffer) {
         if(jobOffer.getSalary()<930)
             throw  new ResourceNotFoundException("El salario debe ser mayor o igual a 930");
@@ -46,13 +53,20 @@ public class JobOfferServiceImpl implements JobOfferService {
         if(!employeerRepository.existsById(employeerId))
             throw  new ResourceNotFoundException("Employeer","Id",employeerId);
         return jobOfferRepository.findById(jobOfferId).map(jobOffer -> {
-            jobOffer.setDescription(jobOfferDetails.getDescription())
+            jobOffer.setTitle(jobOfferDetails.getTitle())
+                    .setType(jobOfferDetails.getType())
+                    .setDescription(jobOfferDetails.getDescription())
                     .setDirection(jobOfferDetails.getDirection())
                     .setSalary(jobOfferDetails.getSalary())
                     .setBegin_date_offer(jobOfferDetails.getBegin_date_offer())
                     .setFinal_date_offer(jobOfferDetails.getFinal_date_offer());
             return jobOfferRepository.save(jobOffer);
         }).orElseThrow(() -> new ResourceNotFoundException("Job Offer","Id",jobOfferId));
+    }
+
+    @Override
+    public Page<JobOffer> getAllJobOffer(Pageable pageable) {
+        return jobOfferRepository.findAll(pageable);
     }
 
     @Override

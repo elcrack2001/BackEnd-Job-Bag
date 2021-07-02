@@ -12,34 +12,14 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "postulantjob")
 public class PostulantJob extends AuditModel {
-    //ID
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    public Postulant getPostulant() {
-        return postulant;
-    }
-
-    public PostulantJob setPostulant(Postulant postulant) {
-        this.postulant = postulant;
-        return this;
-    }
-
-    //Relacion con postulante
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_postulant_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Postulant postulant;
-
-    public JobOffer getJobOffer() {
-        return jobOffer;
-    }
-
-    public PostulantJob setJobOffer(JobOffer jobOffer) {
-        this.jobOffer = jobOffer;
-        return this;
-    }
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_joboffer_id", nullable = false)
@@ -50,11 +30,39 @@ public class PostulantJob extends AuditModel {
     @NotNull
     private boolean aceppt;
 
+    public PostulantJob() {
+    }
+
     public PostulantJob(boolean aceppt) {
         this.aceppt = aceppt;
     }
 
-    public PostulantJob() {
+
+    public Long getId() {
+        return id;
+    }
+
+    public PostulantJob setId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    public Postulant getPostulant() {
+        return postulant;
+    }
+
+    public PostulantJob setPostulant(Postulant postulant) {
+        this.postulant = postulant;
+        return this;
+    }
+
+    public JobOffer getJobOffer() {
+        return jobOffer;
+    }
+
+    public PostulantJob setJobOffer(JobOffer jobOffer) {
+        this.jobOffer = jobOffer;
+        return this;
     }
 
     public boolean isAceppt() {
@@ -63,15 +71,6 @@ public class PostulantJob extends AuditModel {
 
     public PostulantJob setAceppt(boolean aceppt) {
         this.aceppt = aceppt;
-        return this;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public PostulantJob setId(Long id) {
-        this.id = id;
         return this;
     }
 }

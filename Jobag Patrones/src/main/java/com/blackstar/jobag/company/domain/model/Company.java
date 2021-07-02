@@ -2,60 +2,61 @@ package com.blackstar.jobag.company.domain.model;
 
 import com.blackstar.jobag.employeer.domain.model.Employeer;
 import com.blackstar.jobag.sector.domain.model.Sector;
+import com.blackstar.jobag.user.domain.model.AuditModel;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name ="companys")
-public class Company {
+public class Company extends AuditModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
-    @Length(max = 100)
+    @Size(max = 100)
     private String name;
+
     @NotNull
-    @Length(max = 100)
+    @Size(max = 100)
     private String description;
 
     @NotNull
-    @Length(max = 100)
+    @Size(max = 100)
     private String logo;
 
     private Long ruc;
 
     @NotNull
-    @Length(max = 100)
+    @Size(max = 100)
     private String dirección;
 
     @OneToOne( fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "employeer_id", nullable = false)
+    @JoinColumn(name = "fk_employeer_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Employeer employeer;
 
     @ManyToOne( fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "sector_id", nullable = false)
+    @JoinColumn(name = "fk_sector_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Sector sector;
 
+    public Company() {
+    }
 
-    public Company(Long id, String name, String description, String logo, Long ruc, String dirección, Employeer employeer, Sector sector) {
+    public Company(Long id, String name, String description, String logo, Long ruc, String dirección) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.logo = logo;
         this.ruc = ruc;
         this.dirección = dirección;
-        this.employeer = employeer;
-        this.sector =sector;
     }
 
-    public Company(){}
 
     public Long getId() {
         return id;

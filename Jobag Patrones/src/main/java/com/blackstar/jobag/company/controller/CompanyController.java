@@ -19,57 +19,66 @@ import java.util.stream.Collectors;
 
 
 @RestController
+
 @RequestMapping("/api")
 public class CompanyController {
     @Autowired
     private CompanyService companyService;
+
     @Autowired
     private ModelMapper mapper;
 
-    @Operation(summary="Put companys", description="Update companys by employeer Id", tags={"companys"})
-    @GetMapping("/employeers/{employeerId}/companys")
-    public Page<CompanyResource> getAllCompanysByEmployeerId(@PathVariable Long employeerId, Pageable pageable) {
-        Page<Company> companyPage = companyService.getAllCompanysByEmployeerId(employeerId, pageable);
-        List<CompanyResource> resources = companyPage.getContent().stream().map(
-                this::convertToResource).collect(Collectors.toList());
-        return new PageImpl<>(resources, pageable, resources.size());
-    }
 
-
-    @Operation(summary="Get companys", description="Get companys by employeer Id", tags={"companys"})
-    @GetMapping("/employeers/{employeerId}/companys/{companyId}")
-    public CompanyResource getCompanyByIdAndEmployeerId(@PathVariable Long employeerId, @PathVariable Long companyId) {
-        return convertToResource(companyService.getCompanyByIdAndEmployeerId(employeerId, companyId));
-    }
-
-
-    @Operation(summary="Post companys", description="Create companys by employeer Id", tags={"companys"})
-    @PostMapping("/employeers/{employeerId}/companys")
+    @Operation(summary = "Post companys", description = "Create companys by employeer Id", tags = {"companies"})
+    @PostMapping("/employeer/{employeerId}/sector/{sectorId}/companys")
     public CompanyResource createCompany(
             @PathVariable Long employeerId,
+            @PathVariable Long sectorId,
             @Valid @RequestBody SaveCompanyResource resource) {
-        return convertToResource(companyService.createCompany(employeerId, convertToEntity(resource)));
+        return convertToResource(companyService.createCompany(employeerId, sectorId, convertToEntity(resource)));
     }
 
-    @Operation(summary="Put companys", description="Update companys by employeer Id", tags={"companys"})
-    @PutMapping("/employeers/{employeerId}/companys/{companyId}")
+    @Operation(summary="Update Company by Employeer Id and Sector Id", description="Update Company by Employeer Id and Sector Id", tags={"companies"})
+    @PutMapping("/employeer/{employeerId}/sector/{sectorId}/companys")
     public CompanyResource updateCompany(
             @PathVariable Long employeerId,
-            @PathVariable Long companyId,
+            @PathVariable Long sectorId,
             @Valid @RequestBody SaveCompanyResource resource) {
-        return convertToResource(companyService.updateCompany(employeerId, companyId, convertToEntity(resource)));
+        return convertToResource(companyService.updateCompany(employeerId, sectorId, convertToEntity(resource)));
     }
 
-    @Operation(summary="Delete companys", description="Delete companys by employeer Id", tags={"companys"})
-    @DeleteMapping("/employeers/{employeerId}/companys/{companyId}")
+    @Operation(summary="Delete Company by Employeer Id and Sector Id", description="Delete Company by Employeer Id and Sector Id", tags={"companies"})
+    @DeleteMapping("/employeer/{employeerId}/sector/{sectorId}/companys")
     public ResponseEntity<?> deleteCompany(
             @PathVariable Long employeerId,
-            @PathVariable Long companyId) {
-        return companyService.deleteCompany(employeerId, companyId);
+            @PathVariable Long sectorId) {
+        return companyService.deleteCompany(employeerId, sectorId);
     }
+
+    @Operation(summary = "Get All Company", description = "Get All Company", tags = {"companies"})
+    @GetMapping("/companys")
+    public Page<CompanyResource> getAllCompany(Pageable pageable){
+        Page<Company> companyPage = companyService.getAllCompany(pageable);
+        List<CompanyResource> resources = companyPage.getContent()
+                .stream()
+                .map(this::convertToResource)
+                .collect(Collectors.toList());
+        return new PageImpl<>(resources,pageable, resources.size());
+    }
+
+    @Operation(summary="Get Company by Id", description="Get Company by Id", tags={"companies"})
+    @GetMapping("/companys/{companyId}")
+    public CompanyResource getInterviewById(
+            @PathVariable Long companyId) {
+        return convertToResource(companyService.getCompanyById(companyId));
+    }
+
+
+
     private Company convertToEntity(SaveCompanyResource resource) {
         return mapper.map(resource, Company.class);
     }
+
     private CompanyResource convertToResource(Company entity) {
         return mapper.map(entity, CompanyResource.class);
     }

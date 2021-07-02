@@ -47,6 +47,12 @@ public class JobOffer extends AuditModel {
     private Long salary;
 
     @NotNull
+    private String type;
+
+    @NotNull
+    private String title;
+
+    @NotNull
     @Size(max = 60)
     private String direction;
 
@@ -101,6 +107,24 @@ public class JobOffer extends AuditModel {
 
     public JobOffer setDirection(String direction) {
         this.direction = direction;
+        return this;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public JobOffer setType(String type) {
+        this.type = type;
+        return this;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public JobOffer setTitle(String title) {
+        this.title = title;
         return this;
     }
 }

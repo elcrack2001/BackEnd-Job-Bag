@@ -1,13 +1,11 @@
 package com.blackstar.jobag.interview.domain.model;
 
-
 import com.blackstar.jobag.jobOffer.domain.model.JobOffer;
 import com.blackstar.jobag.postulant.domain.model.Postulant;
 import com.blackstar.jobag.user.domain.model.AuditModel;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;

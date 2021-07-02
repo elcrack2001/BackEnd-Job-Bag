@@ -15,6 +15,8 @@ public class SaveJobOfferResource {
     private Long salary;
     @Size(max = 60)
     private String direction;
+    private String type;
+    private String title;
 
     public String getDescription() {
         return description;
@@ -60,4 +62,23 @@ public class SaveJobOfferResource {
         this.direction = direction;
         return this;
     }
+
+    public String getType() {
+        return type;
+    }
+
+    public SaveJobOfferResource setType(String type) {
+        this.type = type;
+        return this;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public SaveJobOfferResource setTitle(String title) {
+        this.title = title;
+        return this;
+    }
 }
+

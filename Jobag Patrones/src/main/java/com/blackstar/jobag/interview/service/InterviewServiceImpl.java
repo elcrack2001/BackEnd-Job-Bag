@@ -46,14 +46,14 @@ public class InterviewServiceImpl implements InterviewService {
     }
 
     @Override
-    public Interview updateInterview(Long postulantId, Long jobOfferId, Long interviewId, Interview interviewDetails) {
+    public Interview updateInterview(Long postulantId, Long jobOfferId, Interview interviewDetails) {
         //Compruebo que exista el postulant
         if(!postulantRepository.existsById(postulantId))
             throw new ResourceNotFoundException("Postulant","Id",postulantId);
         else if (!jobOfferRepository.existsById(jobOfferId))
             throw new ResourceNotFoundException("Job Offer","Id", jobOfferId);
 
-        return interviewRepository.findById(interviewId).map(interview -> {
+        return interviewRepository.findByPostulantIdAndJobOfferId(postulantId, jobOfferId).map(interview -> {
             interview.setDate_Interview(interviewDetails.getDate_Interview())
                     .setLink_Interview(interviewDetails.getLink_Interview())
                     .setLink_Interview(interviewDetails.getLink_Interview());
@@ -62,17 +62,23 @@ public class InterviewServiceImpl implements InterviewService {
     }
 
     @Override
-    public ResponseEntity<?> deleteInterview(Long postulantId, Long jobOfferId, Long interviewId) {
+    public ResponseEntity<?> deleteInterview(Long postulantId, Long jobOfferId) {
         //Compruebo que exista el postulant
         if(!postulantRepository.existsById(postulantId))
             throw new ResourceNotFoundException("Postulant","Id",postulantId);
         else if (!jobOfferRepository.existsById(jobOfferId))
             throw new ResourceNotFoundException("Job Offer","Id", jobOfferId);
 
-        return interviewRepository.findById(interviewId).map(interview -> {
+        return interviewRepository.findByPostulantIdAndJobOfferId(postulantId, jobOfferId).map(interview -> {
             interviewRepository.delete(interview);
             return ResponseEntity.ok().build();
-        }).orElseThrow(() -> new ResourceNotFoundException("Interview","Id",interviewId));
+        }).orElseThrow(() -> new ResourceNotFoundException("Postulant Id" + postulantId + "Job Offer Id" + jobOfferId));
+    }
+
+
+    @Override
+    public Page<Interview> getAllInterview(Pageable pageable) {
+        return interviewRepository.findAll(pageable);
     }
 
     @Override
@@ -86,7 +92,8 @@ public class InterviewServiceImpl implements InterviewService {
     }
 
     @Override
-    public Page<Interview> getAllInterviewByPostulantIdAndJobOfferId(Long postulantId, Long jobOfferId, Pageable pageable) {
-        return interviewRepository.findByPostulantIdAndJobOfferId(postulantId,jobOfferId,pageable);
+    public Interview getInterviewById(Long interviewId) {
+        return interviewRepository.findById(interviewId)
+                .orElseThrow(() -> new ResourceNotFoundException("Interview", "Id", interviewId));
     }
 }
